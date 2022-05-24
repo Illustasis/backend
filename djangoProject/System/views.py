@@ -2,7 +2,7 @@ import json
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from System.models import Author  # 引入数据库 Author 对象
+from System.models import User # 引入数据库 Author 对象
 
 
 @csrf_exempt
@@ -16,8 +16,8 @@ def register(request):  # 继承请求类
             return JsonResponse({'errno': 1002, 'msg': "两次输入的密码不同"})
         else:
             # 新建 Author 对象，赋值用户名和密码并保存
-            new_author = Author(username=username, password=password_1)
-            new_author.save()  # 一定要save才能保存到数据库中
+            new_user = User(name=username, password=password_1)
+            new_user.save()  # 一定要save才能保存到数据库中
             return JsonResponse({'errno': 0, 'msg': "注册成功"})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
@@ -26,14 +26,18 @@ def register(request):  # 继承请求类
 @csrf_exempt
 def login(request):
     if request.method == 'POST':
-        username =  json.loads(request.body.decode()).get('username')  # 获取请求数据
-        password = json.loads(request.body.decode()).get('password')
-        ###author = Author.objects.get(username=username)
-        ###if author.password == password:  # 判断请求的密码是否与数据库存储的密码相同
-            # 密码正确则将用户名存储于session（django用于存储登录信息的数据库位置）
-            ###request.session['username'] = username
-        return JsonResponse({'errno': 0, 'msg': "登录成功"})
-        ###else:
-            ###return JsonResponse({'errno': 1002, 'msg': "密码错误"})
+        username =  request.POST.get('username','')  # 获取请求数据
+        password = request.POST.get('password','')
+        user = User.objects.filter(name=username)
+        if user.exists():
+            author = User.objects.get(name=username)
+            if author.password == password:  # 判断请求的密码是否与数据库存储的密码相同
+                # 密码正确则将用户名存储于session（django用于存储登录信息的数据库位置）
+                request.session['name'] = username
+                return JsonResponse({'errno': 0, 'msg': "登录成功",'data':{'id':author.user_id,'username':username}})
+            else:
+                return JsonResponse({'errno': 1002, 'msg': "密码错误"})
+        else:
+            return JsonResponse({'errno': 1002, 'msg': "用户不存在"})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
