@@ -61,6 +61,26 @@ def savebook(request):
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
+#上传电影数据(管理员,先暂时用着)
+@csrf_exempt
+def savemovie(request):
+    if request.method == 'POST':
+        name = request.POST.get('name','')
+        image = request.POST.get('img','') # 封面图片
+        director = request.POST.get('director','') # 封面图片
+        year = request.POST.get('year','')
+        actor = request.POST.get('actor','')
+        introduction = request.POST.get('intro','') # 封面图片
+        movie=Movie(name=name,image=image,director=director,actor=actor,year=year,introduction=introduction,score=0.0,heat=0)
+        movie.save()
+        savemovie =Movie.objects.all().values('name','movie_id')
+        print(savemovie)
+        print('\n')
+        thismovie=Movie.objects.get(name=request.POST.get('name',''))
+        return JsonResponse({'errno': 0, 'msg': "存书成功",'data':{'id':thismovie.movie_id}})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
 @csrf_exempt
 def hotbook(request):
     if request.method == 'POST':
@@ -77,5 +97,24 @@ def hotbook(request):
             })
             i=i+1
         return JsonResponse({'errno':0,'msg':'查询热门图书','data':hotbooklist})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def hotmovie(request):
+    if request.method == 'POST':
+        num = request.POST.get('num')
+        movielist=Movie.objects.all().order_by('heat').all()
+        hotmovielist=[]
+        i=0
+        while i<10:
+            hotmovielist.append({
+                'name':movielist[i].name,
+                'image':movielist[i].image,
+                'director':movielist[i].director,
+                'id':movielist[i].movie_id
+            })
+            i=i+1
+        return JsonResponse({'errno':0,'msg':'查询热门电影','data':hotmovielist})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})

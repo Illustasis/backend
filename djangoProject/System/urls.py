@@ -5,5 +5,7 @@ urlpatterns = [
     path('register', register),  # 指定register函数的路由为register
     path('login', login),
     path('uploadbook',savebook),
+    path('uploadmovie',savemovie),
     path('book/hot',hotbook),
+    path('movie/hot',hotmovie),
 ]
