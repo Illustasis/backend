@@ -1,5 +1,6 @@
 import json
 
+from django.core import serializers
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from System.models import *
@@ -51,11 +52,30 @@ def savebook(request):
         author = request.POST.get('author','') # 封面图片
         press = request.POST.get('press','') # 封面图片  # 出版社
         introduction = request.POST.get('intro','') # 封面图片
-        book = Book(name,image,author,press,introduction,0.0,0)
+        book = Book(name=name,image=image,author=author,press=press,introduction=introduction,score=0.0,heat=0)
         book.save()
         savebook = Book.objects.all().values('name','book_id')
         print(savebook)
         thisbook=Book.objects.get(name=request.POST.get('name',''))
         return JsonResponse({'errno': 0, 'msg': "存书成功",'data':{'id':thisbook.book_id}})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def hotbook(request):
+    if request.method == 'POST':
+        num = request.POST.get('num')
+        booklist=Book.objects.all().order_by('heat').all()
+        hotbooklist=[]
+        i=0
+        while i<10:
+            hotbooklist.append({
+                'name':booklist[i].name,
+                'image':booklist[i].image,
+                'author':booklist[i].author,
+                'id':booklist[i].book_id
+            })
+            i=i+1
+        return JsonResponse({'errno':0,'msg':'查询热门图书','data':hotbooklist})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
