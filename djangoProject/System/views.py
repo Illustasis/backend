@@ -2,9 +2,9 @@ import json
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from System.models import User # 引入数据库 Author 对象
+from System.models import *
 
-
+#注册
 @csrf_exempt
 def register(request):  # 继承请求类
     print(request)
@@ -22,7 +22,7 @@ def register(request):  # 继承请求类
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
-
+#登录
 @csrf_exempt
 def login(request):
     if request.method == 'POST':
@@ -39,5 +39,23 @@ def login(request):
                 return JsonResponse({'errno': 1002, 'msg': "密码错误"})
         else:
             return JsonResponse({'errno': 1002, 'msg': "用户不存在"})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+#上传书数据(管理员,先暂时用着)
+@csrf_exempt
+def savebook(request):
+    if request.method == 'POST':
+        name = request.POST.get('name','')
+        image = request.POST.get('img','') # 封面图片
+        author = request.POST.get('author','') # 封面图片
+        press = request.POST.get('press','') # 封面图片  # 出版社
+        introduction = request.POST.get('intro','') # 封面图片
+        book = Book(name,image,author,press,introduction,0.0,0)
+        book.save()
+        savebook = Book.objects.all().values('name','book_id')
+        print(savebook)
+        thisbook=Book.objects.get(name=request.POST.get('name',''))
+        return JsonResponse({'errno': 0, 'msg': "存书成功",'data':{'id':thisbook.book_id}})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})

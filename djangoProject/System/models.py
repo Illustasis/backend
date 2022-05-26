@@ -13,14 +13,24 @@ class Book(models.Model):
     image = models.CharField(max_length=200)  # 封面图片
     author = models.CharField(max_length=80)
     press = models.CharField(max_length=80)  # 出版社
-    introduction = models.TextField
+    introduction = models.TextField(max_length=1000,default='')
     score = models.DecimalField(max_digits=1, decimal_places=1)  # 评分，5分满分，1位小数
     heat = models.IntegerField  # 点击量
+
+    def __init__(self, name, image, author, press, intro, score, heat):
+        models.Model.__init__(self)
+        self.name = name
+        self.imag = image
+        self.author = author
+        self.press = press
+        self.introduction = intro
+        self.score = score
+        self.heat = heat
 
 
 class Score(models.Model):  # 评分表
     user_id = models.IntegerField
-    resource_id = models.IntegerField   # 相关资源（book,movie)的id
+    resource_id = models.IntegerField  # 相关资源（book,movie)的id
     score = models.IntegerField
 
 
