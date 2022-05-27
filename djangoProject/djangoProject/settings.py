@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'System.apps.SystemConfig',
-    'corsheaders'
+    'corsheaders',
+    'Book',
 
 ]
 
