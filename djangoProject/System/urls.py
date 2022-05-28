@@ -6,5 +6,7 @@ urlpatterns = [
     path('login', login),
     path('uploadbook',savebook),
     path('uploadmovie',savemovie),
+    path('uploadtele',savetele),
     path('movie/hot',hotmovie),
+    path('tele/hot',hottele),
 ]

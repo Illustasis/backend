@@ -81,6 +81,26 @@ def savemovie(request):
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
+#上传电视剧数据(管理员,先暂时用着)
+@csrf_exempt
+def savetele(request):
+    if request.method == 'POST':
+        name = request.POST.get('name','')
+        image = request.POST.get('img','') # 封面图片
+        nation = request.POST.get('nation','') # 封面图片
+        year = request.POST.get('year','')
+        actor = request.POST.get('actor','')
+        introduction = request.POST.get('intro','') # 封面图片
+        tele=Tele(name=name,image=image,nation=nation,actor=actor,year=year,introduction=introduction,score=0.0,heat=0)
+        tele.save()
+        savetele =Tele.objects.all().values('name','tele_id','image')
+        print(savetele)
+        print('\n')
+        thistele=Tele.objects.get(name=request.POST.get('name',''))
+        return JsonResponse({'errno': 0, 'msg': "存书成功",'data':{'id':thistele.tele_id}})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
 @csrf_exempt
 def hotmovie(request):
     if request.method == 'POST':
@@ -97,5 +117,25 @@ def hotmovie(request):
             })
             i=i+1
         return JsonResponse({'errno':0,'msg':'查询热门电影','data':hotmovielist})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def hottele(request):
+    if request.method == 'POST':
+        num = request.POST.get('num')
+        telelist=Tele.objects.all().order_by('heat').all()
+        hottelelist=[]
+        i=0
+        while i<10:
+            hottelelist.append({
+                'name':telelist[i].name,
+                'image':telelist[i].image,
+                'year':telelist[i].year,
+                'nation':telelist[i].nation,
+                'id':telelist[i].tele_id
+            })
+            i=i+1
+        return JsonResponse({'errno':0,'msg':'查询热门电影','data':hottelelist})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})

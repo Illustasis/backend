@@ -28,6 +28,17 @@ class Movie(models.Model):
     score = models.DecimalField(max_digits=1, decimal_places=1)  # 评分，5分满分，1位小数
     heat = models.IntegerField(default=0)  # 点击量
 
+class Tele(models.Model):
+    tele_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=80)
+    image: str = models.CharField(max_length=200)  # 封面图片
+    nation = models.CharField(max_length=80)
+    actor = models.CharField(max_length=200)
+    year = models.IntegerField(default=1990)
+    introduction = models.TextField(max_length=1000,default='')
+    score = models.DecimalField(max_digits=1, decimal_places=1)  # 评分，5分满分，1位小数
+    heat = models.IntegerField(default=0)  # 点击量
+
 
 class Score(models.Model):  # 评分表
     user_id = models.IntegerField
@@ -48,9 +59,9 @@ class Article(models.Model):
 
 
 class Collect(models.Model):
-    user_id = models.IntegerField
-    resource_id = models.IntegerField  # 相关资源（book,movie,topic，group）的id
-    column = models.IntegerField  # 分类 1:book,2:movie,3:topic,4:group
+    user_id = models.IntegerField(default=0)
+    resource_id = models.IntegerField(default=0)   # 相关资源（book,movie,topic，group）的id
+    column = models.IntegerField(default=0)   # 分类 1:book,2:movie,3:topic,4:group
 
 
 class Reply(models.Model):
