@@ -43,6 +43,27 @@ def uncollect(request):
         return JsonResponse({'errno':200, 'msg': "已取消收藏"})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def book_collection(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        collectbook = Collect.objects.filter(user_id=user_id,column=1)
+        print(collectbook)
+        collections=[]
+        for item in collectbook:
+            book = Book.objects.get(book_id=item.resource_id)
+            collections.append({
+                'id': book.book_id,
+                'name':book.name,
+                'author':book.author,
+                'image':book.image,
+                'star':book.score,
+            })
+        return JsonResponse({'errno':0, 'data':collections})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
 @csrf_exempt
 def detail(request):
     if request.method == 'POST':

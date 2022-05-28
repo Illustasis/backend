@@ -8,4 +8,5 @@ urlpatterns = [
     path('article/hot', hot_article),
     path('article/new', new_article),
     path('hot', hotbook),
+    path('collection', book_collection),
 ]
