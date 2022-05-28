@@ -3,6 +3,24 @@ from django.views.decorators.csrf import csrf_exempt
 from System.models import *
 import json
 
+@csrf_exempt
+def hotbook(request):
+    if request.method == 'POST':
+        num = request.POST.get('num')
+        booklist=Book.objects.all().order_by('heat').all()
+        hotbooklist=[]
+        i=0
+        while i<10:
+            hotbooklist.append({
+                'name':booklist[i].name,
+                'image':booklist[i].image,
+                'author':booklist[i].author,
+                'id':booklist[i].book_id
+            })
+            i=i+1
+        return JsonResponse({'errno':0,'msg':'查询热门图书','data':hotbooklist})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
 @csrf_exempt
 def detail(request):
