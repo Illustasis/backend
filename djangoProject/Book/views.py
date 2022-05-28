@@ -10,7 +10,7 @@ def hotbook(request):
         booklist=Book.objects.all().order_by('heat').all()
         hotbooklist=[]
         i=0
-        while i<10:
+        while i< int(num):
             hotbooklist.append({
                 'name':booklist[i].name,
                 'image':booklist[i].image,
@@ -19,6 +19,24 @@ def hotbook(request):
             })
             i=i+1
         return JsonResponse({'errno':0,'msg':'查询热门图书','data':hotbooklist})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def highbook(request):
+    if request.method == 'POST':
+        booklist=Book.objects.all().order_by('score').all()
+        highbooklist=[]
+        i=0
+        while i<20:
+            highbooklist.append({
+                'name':booklist[i].name,
+                'image':booklist[i].image,
+                'star':booklist[i].score,
+                'id':booklist[i].book_id
+            })
+            i=i+1
+        return JsonResponse({'errno':0,'msg':'查询热门图书','data':highbooklist})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
