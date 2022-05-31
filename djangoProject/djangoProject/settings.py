@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'System.apps.SystemConfig',
     'corsheaders',
     'Book',
-
+    'Topic',
+    'Group'
 ]
 
 MIDDLEWARE = [
