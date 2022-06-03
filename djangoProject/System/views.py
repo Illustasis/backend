@@ -138,41 +138,5 @@ def savetopic(request):
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
-@csrf_exempt
-def hotmovie(request):
-    if request.method == 'POST':
-        num = request.POST.get('num')
-        movielist=Movie.objects.all().order_by('heat').all()
-        hotmovielist=[]
-        i=0
-        while i<10:
-            hotmovielist.append({
-                'name':movielist[i].name,
-                'image':movielist[i].image,
-                'director':movielist[i].director,
-                'id':movielist[i].movie_id
-            })
-            i=i+1
-        return JsonResponse({'errno':0,'msg':'查询热门电影','data':hotmovielist})
-    else:
-        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
-@csrf_exempt
-def hottele(request):
-    if request.method == 'POST':
-        num = request.POST.get('num')
-        telelist=Tele.objects.all().order_by('heat').all()
-        hottelelist=[]
-        i=0
-        while i<10:
-            hottelelist.append({
-                'name':telelist[i].name,
-                'image':telelist[i].image,
-                'year':telelist[i].year,
-                'nation':telelist[i].nation,
-                'id':telelist[i].tele_id
-            })
-            i=i+1
-        return JsonResponse({'errno':0,'msg':'查询热门电影','data':hottelelist})
-    else:
-        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+

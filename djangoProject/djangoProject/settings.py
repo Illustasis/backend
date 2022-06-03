@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'Book',
     'Topic',
-    'Group'
+    'Group',
+    'Movie',
+    'Tele'
 ]
 
 MIDDLEWARE = [

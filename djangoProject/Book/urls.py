@@ -10,4 +10,7 @@ urlpatterns = [
     path('hot', hotbook),
     path('high', highbook),
     path('collection', book_collection),
+    path('star', star),
+    path('passage', commentBook),
+    path('mypassage',my_article),
 ]

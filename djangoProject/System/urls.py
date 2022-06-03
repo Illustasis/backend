@@ -9,6 +9,4 @@ urlpatterns = [
     path('uploadtele',savetele),
     path('uploadgroup',savegroup),
     path('uploadtopic',savetopic),
-    path('movie/hot',hotmovie),
-    path('tele/hot',hottele),
 ]

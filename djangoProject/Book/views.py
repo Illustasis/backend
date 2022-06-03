@@ -7,7 +7,7 @@ import json
 def hotbook(request):
     if request.method == 'POST':
         num = request.POST.get('num')
-        booklist=Book.objects.all().order_by('heat').all()
+        booklist=Book.objects.all().order_by('-heat').all()
         hotbooklist=[]
         i=0
         while i< int(num):
@@ -25,7 +25,7 @@ def hotbook(request):
 @csrf_exempt
 def highbook(request):
     if request.method == 'POST':
-        booklist=Book.objects.all().order_by('score').all()
+        booklist=Book.objects.all().order_by('-score').all()
         highbooklist=[]
         i=0
         while i<20:
@@ -67,7 +67,6 @@ def book_collection(request):
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         collectbook = Collect.objects.filter(user_id=user_id,column=1)
-        print(collectbook)
         collections=[]
         for item in collectbook:
             book = Book.objects.get(book_id=item.resource_id)
@@ -89,6 +88,19 @@ def detail(request):
         user_id = request.POST.get('user_id')  # 获取用户ID
         book = Book.objects.get(book_id=book_id)
         users_id = Collect.objects.filter(resource_id=book_id,column=1,user_id=user_id)# 查询关注此书的用户
+        star = Score.objects.filter(column=1, resource_id=book_id,user_id=user_id)
+        myscore=0.0
+        if star.exists():
+            star = Score.objects.get(column=1, resource_id=book_id,user_id=user_id)
+            myscore = star.score
+        people = Score.objects.filter(column=1, resource_id=book_id)
+        peoplenum=len(people)
+        rank_list=[]
+        i=1.0
+        while i<6:
+            rank_num = len(Score.objects.filter(column=1, resource_id=book_id,score=i))
+            rank_list.append(rank_num)
+            i=i+1.0
         # 生成关注用户ID列表(int数据类型)
         if users_id.exists(): # 查找该用户是否在列表内，在则返回已关注，否则返回未关注
             return JsonResponse(
@@ -96,18 +108,60 @@ def detail(request):
                  'data':{
                  'book_id': book.book_id, 'name': book.name, 'image': book.image, 'author': book.author,
                  'press': book.press, 'intro': book.introduction, 'score': book.score, 'heat': book.heat},
-                 'collect': 1})
+                 'collect': 1,'evaluate':myscore,'people':peoplenum,'list':rank_list})
         else:
             return JsonResponse(
                 {'errno': 0,
                  'data': {
                      'book_id': book.book_id, 'name': book.name, 'image': book.image, 'author': book.author,
                      'press': book.press, 'intro': book.introduction, 'score': book.score, 'heat': book.heat},
-                     'collect': 0})
+                     'collect': 0,'evaluate':myscore,'people':peoplenum,'list':rank_list})
 
     else:
         return JsonResponse({'errno': 1000})
 
+@csrf_exempt
+def star(request):
+    if request.method == 'POST':
+        book_id = request.POST.get('book_id')
+        user_id = request.POST.get('user_id')
+        newscore = request.POST.get('score')
+        scores = Score.objects.filter(column=1, resource_id=book_id).values('score')
+        star = Score.objects.filter(column=1,resource_id=book_id,user_id=user_id)
+        if star.exists():
+            star = Score.objects.get(column=1,resource_id=book_id,user_id=user_id)
+            star.score=newscore
+            star.save()
+        else:
+            star = Score(user_id=user_id,resource_id=book_id,column=1,score=newscore)
+            star.save()
+        scores= Score.objects.filter(column=1,resource_id=book_id)
+        sum=0
+        num=0
+        for score in scores:
+            sum=sum+score.score
+            num=num+1
+        average = sum/num
+        book = Book.objects.get(book_id=book_id)
+        book.score=average
+        book.save()
+        return JsonResponse({'errno':0, 'data':star.score,'msg':'评分成功！'})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def commentBook(request):
+    if request.method == 'POST':
+        book_id = request.POST.get('book_id')
+        user_id = request.POST.get('user_id')
+        title=request.POST.get('title')
+        text=request.POST.get('text')
+        article=Article(title=title,text=text,author_id=user_id,resource_id=book_id,heat=0,column=1,likes=0)
+        print(article.article_id)
+        article.save()
+        return JsonResponse({'errno':0,'msg':'发布成功！','data':article.pk})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
 @csrf_exempt
 def hot_article(request):
@@ -117,11 +171,10 @@ def hot_article(request):
         article_list = []
         for article in articles:
             article_list.append(article)
-        article_json = json.dumps({'value': article_list}, ensure_ascii=False)
         # 生成文章的JSON文件
-        return JsonResponse({'成功': 200}, article_json)
+        return JsonResponse({'errno':0,'data':article_list})
     else:
-        return JsonResponse({'失败，请求方式错误': 100})
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
 
 @csrf_exempt
@@ -137,3 +190,19 @@ def new_article(request):
         return JsonResponse({'成功': 200}, article_json)
     else:
         return JsonResponse({'失败，请求方式错误': 100})
+
+@csrf_exempt
+def my_article(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        articles = Article.objects.filter(column=1).filter(author_id=user_id).order_by('-date')
+        passage=[]
+        for article in articles:
+            passage.append({
+                'id':article.article_id,
+                'title':article.title
+            })
+        return JsonResponse({'errno':0, 'data':passage})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+

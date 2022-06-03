@@ -7,5 +7,7 @@ urlpatterns = [
     path('api/book/', include(('Book.urls', 'Book'))),
     path('api/topic/', include(('Topic.urls', 'Topic'))),
     path('api/group/', include(('Group.urls', 'Group'))),
+    path('api/movie/', include(('Movie.urls', 'Movie'))),
+    path('api/tele/', include(('Tele.urls', 'Tele'))),
 ]
 

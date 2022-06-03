@@ -2,9 +2,10 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from System.models import *
 import json
+import random
 
 @csrf_exempt
-def hottopic(request):
+def hot(request):
     if request.method == 'POST':
         num = request.POST.get('num')
         list=Topic.objects.all().order_by('heat').all()
@@ -20,3 +21,82 @@ def hottopic(request):
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
+@csrf_exempt
+def random(request):
+    if request.method == 'POST':
+        list=[]
+        topics=[]
+        list=Topic.objects.all().order_by('?')[:8]
+        for topic in list:
+            topics.append({'name':topic.name,'id':topic.topic_id})
+        return JsonResponse({'errno':0,'msg':'话题广场','data':topics})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+@csrf_exempt
+def detail(request):
+    if request.method == 'POST':
+        topic_id = request.POST.get('topic_id')
+        user_id = request.POST.get('user_id')
+        topic = Topic.objects.get(topic_id=topic_id)
+        collect = Collect.objects.filter(resource_id=topic_id,user_id=user_id,column=4)
+        people = Collect.objects.filter(resource_id=topic_id,column=4)
+        if collect.exists():
+            return JsonResponse(
+                {'errno': 0,
+                 'data': {
+                     'name':topic.name,'id':topic_id,'intro':topic.introduction,'people':len(people)
+                     },
+                 'collect': 1})
+        else:
+            return JsonResponse(
+                {'errno': 0,
+                 'data': {
+                     'name': topic.name, 'id': topic_id, 'intro': topic.introduction,
+                     'people':0,'passage':0
+                 },
+                 'collect': 0})
+    else:
+        return JsonResponse({'errno': 1000})
+
+@csrf_exempt
+def collection(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        collect = Collect.objects.filter(user_id=user_id,column=4)
+        print(collect)
+        collections=[]
+        for item in collect:
+            topic = Topic.objects.get(topic_id=item.resource_id)
+            collections.append({
+                'id': topic.topic_id,
+                'name':topic.name,
+            })
+        return JsonResponse({'errno':0, 'data':collections})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+@csrf_exempt
+def collect(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        topic_id = request.POST.get('topic_id')
+        collection = Collect.objects.filter(resource_id=topic_id, column=4, user_id=user_id)
+        if collection.exists():
+            return JsonResponse({'errno': 0, 'msg': "收藏成功"})
+        collecttopic = Collect(resource_id=topic_id, column=4, user_id=user_id)
+        collecttopic.save()
+        return JsonResponse({'errno':0, 'msg': "收藏成功"})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def uncollect(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        topic_id = request.POST.get('topic_id')
+        collection = Collect.objects.filter(resource_id=topic_id, column=4, user_id=user_id)
+        if collection.exists():
+            for collect in collection:
+                collect.delete()
+        return JsonResponse({'errno':0, 'msg': "取消收藏"})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
