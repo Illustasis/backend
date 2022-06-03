@@ -9,5 +9,6 @@ urlpatterns = [
     path('api/group/', include(('Group.urls', 'Group'))),
     path('api/movie/', include(('Movie.urls', 'Movie'))),
     path('api/tele/', include(('Tele.urls', 'Tele'))),
+    path('api/passage/', include(('Passage.urls', 'Passage'))),
 ]
 

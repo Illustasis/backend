@@ -8,4 +8,6 @@ urlpatterns = [
     path('collect', collect),
     path('uncollect', uncollect),
     path('collection', collection),
+    path('passage', dt),
+    path('mypassage',my_article),
 ]

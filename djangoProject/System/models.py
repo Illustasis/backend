@@ -65,7 +65,7 @@ class Article(models.Model):
     author_id = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True)
     heat = models.IntegerField(default=0)
-    column = models.IntegerField(default=0)   # 分类 1:book,2:movie,3:topic
+    column = models.IntegerField(default=0)   # 分类  1:book,2:movie,3:tele,4:topic,5:group,6:passage
     resource_id = models.IntegerField(default=0)   # 相关资源（book,movie,topic）的id
     likes = models.IntegerField(default=0)
 
@@ -78,8 +78,8 @@ class Collect(models.Model):
 
 class Reply(models.Model):
     reply_id = models.AutoField(primary_key=True)
-    article_id = models.IntegerField
+    article_id = models.IntegerField(default=0)
     text = models.CharField(max_length=80)
-    likes = models.IntegerField
-    author_id = models.IntegerField
-    reply_to = models.IntegerField
+    likes = models.IntegerField(default=0)
+    author_id = models.IntegerField(default=0)
+    reply_to = models.IntegerField(default=0)

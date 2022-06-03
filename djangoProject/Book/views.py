@@ -157,7 +157,6 @@ def commentBook(request):
         title=request.POST.get('title')
         text=request.POST.get('text')
         article=Article(title=title,text=text,author_id=user_id,resource_id=book_id,heat=0,column=1,likes=0)
-        print(article.article_id)
         article.save()
         return JsonResponse({'errno':0,'msg':'发布成功！','data':article.pk})
     else:

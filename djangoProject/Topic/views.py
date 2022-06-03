@@ -74,6 +74,7 @@ def collection(request):
         return JsonResponse({'errno':0, 'data':collections})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
 @csrf_exempt
 def collect(request):
     if request.method == 'POST':
@@ -98,5 +99,32 @@ def uncollect(request):
             for collect in collection:
                 collect.delete()
         return JsonResponse({'errno':0, 'msg': "取消收藏"})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def dt(request):
+    if request.method == 'POST':
+        resource_id = request.POST.get('topic_id')
+        user_id = request.POST.get('user_id')
+        text = request.POST.get('text')
+        article = Article(text=text, author_id=user_id, resource_id=resource_id, heat=0, column=4, likes=0)
+        article.save()
+        return JsonResponse({'errno': 0, 'msg': '发布成功！', 'data': article.pk})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def my_article(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        articles = Article.objects.filter(column=4).filter(author_id=user_id).order_by('-date')
+        passage=[]
+        for article in articles:
+            passage.append({
+                'id':article.article_id,
+                'text':article.text
+            })
+        return JsonResponse({'errno':0, 'data':passage})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})

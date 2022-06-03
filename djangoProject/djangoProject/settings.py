@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'Topic',
     'Group',
     'Movie',
-    'Tele'
+    'Tele',
+    'Passage'
 ]
 
 MIDDLEWARE = [
