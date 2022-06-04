@@ -95,3 +95,12 @@ class Photos(models.Model):
     photo = models.ImageField(upload_to='photos')
     resource_id = models.IntegerField(default=0)  # 带有图片的资源id
     column = models.IntegerField(default=0)  # 用于指向resource_id的分类标志 1:user 2:article ...
+
+
+class Report(models.Model):
+    report_id = models.AutoField(primary_key=True)
+    reporter_id = models.IntegerField(default=0)
+    article_id = models.IntegerField(default=0)
+    report_title = models.CharField(max_length=80)
+    report_reason = models.CharField(max_length=200)
+    result = models.IntegerField(default=0)     # 举报结果，0：未处理，1：举报成功，文章已删除，2：失败
