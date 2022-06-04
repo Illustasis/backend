@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'Group',
     'Movie',
     'Tele',
-    'Passage'
+    'Passage',
+    'Photo',
 ]
 
 MIDDLEWARE = [
@@ -182,3 +183,10 @@ CORS_ORIGIN_WHITELIST = (
 # 允许所有主机执行跨站点请求，默认为False
 # 如果没设置该参数，则必须设置白名单，运行部分白名单的主机才能执行跨站点请求
 CORS_ORIGIN_ALLOW_ALL = True
+
+
+MEDIA_URL = '/photos/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'photos')
+
+
+
