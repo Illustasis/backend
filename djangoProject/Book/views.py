@@ -126,7 +126,6 @@ def star(request):
         book_id = request.POST.get('book_id')
         user_id = request.POST.get('user_id')
         newscore = request.POST.get('score')
-        scores = Score.objects.filter(column=1, resource_id=book_id).values('score')
         star = Score.objects.filter(column=1,resource_id=book_id,user_id=user_id)
         if star.exists():
             star = Score.objects.get(column=1,resource_id=book_id,user_id=user_id)

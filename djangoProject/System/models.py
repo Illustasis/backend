@@ -57,7 +57,7 @@ class Topic(models.Model):
 
 
 class Score(models.Model):  # 评分表
-    score_id = models.AutoField(primary_key=True, default=1)
+    score_id = models.AutoField(primary_key=True)
     user_id = models.IntegerField(default=0)
     resource_id = models.IntegerField(default=0)  # 相关资源（book,movie)的id
     column = models.IntegerField(default=0)  # 分类 1:book,2:movie,3:tele
