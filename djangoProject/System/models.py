@@ -3,6 +3,7 @@ from django.db import models
 
 class User(models.Model):
     name = models.CharField(max_length=40)
+    isAdmin = models.IntegerField(default=0)
     password = models.CharField(max_length=20)
     user_id = models.AutoField(primary_key=True)
 
@@ -71,7 +72,7 @@ class Article(models.Model):
     author_id = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True)
     heat = models.IntegerField(default=0)
-    column = models.IntegerField(default=0)  # 分类  1:book,2:movie,3:tele,4:topic,5:group,6:passage
+    column = models.IntegerField(default=0)  # 分类  1:book,2:movie,3:tele,4:topic,5:group
     resource_id = models.IntegerField(default=0)  # 相关资源（book,movie,topic）的id
     likes = models.IntegerField(default=0)
 
@@ -80,6 +81,11 @@ class Collect(models.Model):
     user_id = models.IntegerField(default=0)
     resource_id = models.IntegerField(default=0)  # 相关资源（book,movie,topic，group）的id
     column = models.IntegerField(default=0)  # 分类 1:book,2:movie,3:tele,4:topic,5:group,6:passage
+
+class Like(models.Model):
+    user_id = models.IntegerField(default=0)
+    resource_id = models.IntegerField(default=0)
+    column = models.IntegerField(default=0)  # 分类 1:article,2.reply
 
 
 class Reply(models.Model):
@@ -92,7 +98,8 @@ class Reply(models.Model):
 
 
 class Photos(models.Model):
-    photo = models.ImageField(upload_to='photos')
+    #photo = models.ImageField(upload_to='photos')
+    url = models.CharField(max_length=200,default='')
     resource_id = models.IntegerField(default=0)  # 带有图片的资源id
     column = models.IntegerField(default=0)  # 用于指向resource_id的分类标志 1:user 2:article ...
 

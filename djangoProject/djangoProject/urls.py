@@ -6,6 +6,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import staticfiles
 from django.contrib.staticfiles.urls import static
 from . import settings
+from django.urls import include, path, re_path
+from django.views.static import serve
 
 urlpatterns = [
     path('api/admin/', admin.site.urls),
@@ -17,7 +19,6 @@ urlpatterns = [
     path('api/tele/', include(('Tele.urls', 'Tele'))),
     path('api/passage/', include(('Passage.urls', 'Passage'))),
     path('api/photo/', include(('Photo.urls', 'Photo'))),
+    path('api/user/', include(('User.urls', 'User'))),
+    path('upload/<path>',serve,{'document_root':settings.UPLOAD_FILE})
 ]
-
-urlpatterns += staticfiles_urlpatterns()
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
