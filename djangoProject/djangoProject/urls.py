@@ -20,5 +20,6 @@ urlpatterns = [
     path('api/passage/', include(('Passage.urls', 'Passage'))),
     path('api/photo/', include(('Photo.urls', 'Photo'))),
     path('api/user/', include(('User.urls', 'User'))),
-    path('upload/<path>',serve,{'document_root':settings.UPLOAD_FILE})
+    path('upload/<path>',serve,{'document_root': settings.UPLOAD_FILE}),
+    path('api/search/', include(('Search.urls', 'Search'))),
 ]

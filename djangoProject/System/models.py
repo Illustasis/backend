@@ -82,6 +82,7 @@ class Collect(models.Model):
     resource_id = models.IntegerField(default=0)  # 相关资源（book,movie,topic，group）的id
     column = models.IntegerField(default=0)  # 分类 1:book,2:movie,3:tele,4:topic,5:group,6:passage
 
+
 class Like(models.Model):
     user_id = models.IntegerField(default=0)
     resource_id = models.IntegerField(default=0)
@@ -98,7 +99,6 @@ class Reply(models.Model):
 
 
 class Photos(models.Model):
-    #photo = models.ImageField(upload_to='photos')
     url = models.CharField(max_length=200,default='')
     resource_id = models.IntegerField(default=0)  # 带有图片的资源id
     column = models.IntegerField(default=0)  # 用于指向resource_id的分类标志 1:user 2:article ...

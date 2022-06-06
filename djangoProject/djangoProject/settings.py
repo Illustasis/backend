@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'Tele',
     'Passage',
     'Photo',
+    'Search',
 ]
 
 MIDDLEWARE = [
