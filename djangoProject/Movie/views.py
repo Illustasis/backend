@@ -10,7 +10,7 @@ def hot(request):
         movielist=Movie.objects.all().order_by('heat').all()
         hotmovielist=[]
         i=0
-        while i<10:
+        while i<int(num):
             hotmovielist.append({
                 'name':movielist[i].name,
                 'image':movielist[i].image,
@@ -29,7 +29,7 @@ def high(request):
         movielist=Movie.objects.all().order_by('score').all()
         highmovielist=[]
         i=0
-        while i<10:
+        while i<int(num):
             highmovielist.append({
                 'name':movielist[i].name,
                 'image':movielist[i].image,
