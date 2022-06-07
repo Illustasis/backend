@@ -8,4 +8,7 @@ urlpatterns = [
     path('hot', hot),
     path('high', high),
     path('collection', collection),
+    path('star',star),
+    path('passage', passage),
+    path('mypassage', my_article),
 ]

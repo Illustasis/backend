@@ -25,7 +25,6 @@ def bookcomment(request):
             'user_id':user.user_id,
             'title':article.title,
             'content':article.text,
-            'writer':book.author,
             'date':article.date,
             'star':score.score,
             'like':len(like),
@@ -77,3 +76,78 @@ def dt(request):
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
+@csrf_exempt
+def moviecomment(request):
+    if request.method == 'POST':
+        article_id = request.POST.get('article_id')
+        article=Article.objects.get(article_id=article_id)
+        print(Article.objects.all().values('article_id','author_id'))
+        movie=Movie.objects.get(movie_id=article.resource_id)
+        user=User.objects.get(user_id=article.author_id)
+        score=Score.objects.get(column=2,resource_id=article.resource_id,user_id=article.author_id)
+        like = Collect.objects.filter(column=1,resource_id=article_id)
+        reply = Reply.objects.filter(article_id=article_id)
+        icon = Photos.objects.filter(resource_id=user.user_id,column=1)
+        if icon.exists():
+            icon = Photos.objects.get(resource_id=user.user_id,column=1).url
+        else:
+            icon = ""
+        content={
+            'username':user.name,
+            'icon':icon,
+            'user_id':user.user_id,
+            'title':article.title,
+            'content':article.text,
+            'date':article.date,
+            'star':score.score,
+            'like':len(like),
+            'reply':len(reply)
+        }
+        resource={
+            'name':movie.name,
+            'id':movie.movie_id,
+            'star':movie.score,
+            'img':movie.image,
+            'director':movie.director,
+        }
+        return JsonResponse({'errno':0,'msg':'查询书评详情','data':{'passage':content,'resource':resource}})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def telecomment(request):
+    if request.method == 'POST':
+        article_id = request.POST.get('article_id')
+        article=Article.objects.get(article_id=article_id)
+        print(Article.objects.all().values('article_id','author_id'))
+        tele=Tele.objects.get(tele_id=article.resource_id)
+        user=User.objects.get(user_id=article.author_id)
+        score=Score.objects.get(column=3,resource_id=article.resource_id,user_id=article.author_id)
+        like = Collect.objects.filter(column=1,resource_id=article_id)
+        reply = Reply.objects.filter(article_id=article_id)
+        icon = Photos.objects.filter(resource_id=user.user_id,column=1)
+        if icon.exists():
+            icon = Photos.objects.get(resource_id=user.user_id,column=1).url
+        else:
+            icon = ""
+        content={
+            'username':user.name,
+            'icon':icon,
+            'user_id':user.user_id,
+            'title':article.title,
+            'content':article.text,
+            'date':article.date,
+            'star':score.score,
+            'like':len(like),
+            'reply':len(reply)
+        }
+        resource={
+            'name':tele.name,
+            'id':tele.tele_id,
+            'nation': tele.nation,
+            'img':tele.image,
+            'year':tele.year
+        }
+        return JsonResponse({'errno':0,'msg':'查询影评详情','data':{'passage':content,'resource':resource}})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})

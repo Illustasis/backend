@@ -80,7 +80,7 @@ class Article(models.Model):
 class Collect(models.Model):
     user_id = models.IntegerField(default=0)
     resource_id = models.IntegerField(default=0)  # 相关资源（book,movie,topic，group）的id
-    column = models.IntegerField(default=0)  # 分类 1:book,2:movie,3:tele,4:topic,5:group,6:passage
+    column = models.IntegerField(default=0)  # 分类 1:book,2:movie,3:tele,4:topic,5:group;
 
 
 class Like(models.Model):

@@ -112,3 +112,60 @@ def detail(request):
 
     else:
         return JsonResponse({'errno': 1000})
+
+@csrf_exempt
+def passage(request):
+    if request.method == 'POST':
+        movie_id = request.POST.get('movie_id')
+        user_id = request.POST.get('user_id')
+        title=request.POST.get('title')
+        text=request.POST.get('text')
+        article=Article(title=title,text=text,author_id=user_id,resource_id=movie_id,heat=0,column=2,likes=0)
+        article.save()
+        return JsonResponse({'errno':0,'msg':'发布成功！','data':article.pk})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def star(request):
+    if request.method == 'POST':
+        movie_id = request.POST.get('movie_id')
+        user_id = request.POST.get('user_id')
+        newscore = request.POST.get('score')
+        star = Score.objects.filter(column=2,resource_id=movie_id,user_id=user_id)
+        if star.exists():
+            star = Score.objects.get(column=2,resource_id=movie_id,user_id=user_id)
+            star.score=newscore
+            star.save()
+        else:
+            star = Score(user_id=user_id,resource_id=movie_id,column=2,score=newscore)
+            star.save()
+        scores= Score.objects.filter(column=2,resource_id=movie_id)
+        sum=0
+        num=0
+        for score in scores:
+            sum=sum+score.score
+            num=num+1
+        average = sum/num
+        movie = Movie.objects.get(movie_id=movie_id)
+        movie.score=average
+        movie.save()
+        return JsonResponse({'errno':0, 'data':star.score,'msg':'评分成功！'})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def my_article(request):
+    if request.method == 'POST':
+        if request.method == 'POST':
+            user_id = request.POST.get('user_id')
+            articles = Article.objects.filter(column=2).filter(author_id=user_id).order_by('-date')
+            passage = []
+            for article in articles:
+                passage.append({
+                    'id': article.article_id,
+                    'title': article.title
+                })
+            return JsonResponse({'errno': 0, 'data': passage})
+        else:
+            return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
