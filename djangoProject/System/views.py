@@ -82,7 +82,7 @@ def savemovie(request):
         print(savemovie)
         print('\n')
         thismovie = Movie.objects.get(name=request.POST.get('name', ''))
-        return JsonResponse({'errno': 0, 'msg': "存书成功", 'data': {'id': thismovie.movie_id}})
+        return JsonResponse({'errno': 0, 'msg': "存电影成功", 'data': {'id': thismovie.movie_id}})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
@@ -104,7 +104,7 @@ def savetele(request):
         print(savetele)
         print('\n')
         thistele = Tele.objects.get(name=request.POST.get('name', ''))
-        return JsonResponse({'errno': 0, 'msg': "存书成功", 'data': {'id': thistele.tele_id}})
+        return JsonResponse({'errno': 0, 'msg': "存电视剧成功", 'data': {'id': thistele.tele_id}})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
@@ -123,7 +123,7 @@ def savegroup(request):
         savegroup = Group.objects.all().values('name', 'group_id')
         print(savegroup)
         thisgroup = Group.objects.get(name=request.POST.get('name', ''))
-        return JsonResponse({'errno': 0, 'msg': "存书成功", 'data': {'id': thisgroup.group_id}})
+        return JsonResponse({'errno': 0, 'msg': "存小组成功", 'data': {'id': thisgroup.group_id}})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
@@ -143,7 +143,7 @@ def savetopic(request):
         print(savetopic)
         thistopic = Topic.objects.get(name=request.POST.get('name', ''))
         name1 = Topic.objects.get(topic_id=3)
-        return JsonResponse({'errno': 0, 'msg': "存书成功", 'data': {'id': thistopic.topic_id, 'content': name1.name}})
+        return JsonResponse({'errno': 0, 'msg': "存话题成功", 'data': {'id': thistopic.topic_id, 'content': name1.name}})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
