@@ -128,3 +128,57 @@ def my_article(request):
         return JsonResponse({'errno':0, 'data':passage})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+
+@csrf_exempt
+def hot_article(request):
+    if request.method == 'POST':
+        topic_id = request.POST.get('topic_id')
+        articles = Article.objects.filter(column=4).filter(resource_id=topic_id).order_by('-heat')
+        article_list = []
+        for article in articles:
+            user = User.objects.get(user_id=article.author_id)
+            img = ''
+            icon = Photos.objects.filter(column=4, resource_id=user.user_id)
+            if icon.exists():
+                img = Photos.objects.get(column=4, resource_id=user.user_id).url
+            article_list.append({
+                'id':article.article_id,
+                'username': user.name,
+                'userid': user.user_id,
+                'date': article.date,
+                'content': article.text,
+                'title': article.title,
+                'usericon': img,
+                'thestyle': ''
+            })
+        return JsonResponse({'errno': 0, 'data': article_list})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+
+@csrf_exempt
+def new_article(request):
+    if request.method == 'POST':
+        topic_id = request.POST.get('topic_id')
+        articles = Article.objects.filter(column=4).filter(resource_id=topic_id).order_by('-heat')
+        article_list = []
+        for article in articles:
+            user = User.objects.get(user_id=article.author_id)
+            img = ''
+            icon = Photos.objects.filter(column=4, resource_id=user.user_id)
+            if icon.exists():
+                img = Photos.objects.get(column=4, resource_id=user.user_id).url
+            article_list.append({
+                'id': article.article_id,
+                'username': user.name,
+                'userid': user.user_id,
+                'date': article.date,
+                'content': article.text,
+                'title': article.title,
+                'usericon': img,
+                'thestyle': ''
+            })
+        return JsonResponse({'errno': 0, 'data': article_list})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})

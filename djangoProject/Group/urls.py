@@ -7,4 +7,6 @@ urlpatterns = [
     path('delete', delete_kind),
     path('search', search_kind),
     path('upload', upload_passage),
+    path('hot_article', hot_article),
+    path('new_article', new_article),
 ]

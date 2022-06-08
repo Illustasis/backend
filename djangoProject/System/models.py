@@ -111,3 +111,9 @@ class Report(models.Model):
     report_title = models.CharField(max_length=80)
     report_reason = models.CharField(max_length=200)
     result = models.IntegerField(default=0)     # 举报结果，0：未处理，1：举报成功，文章已删除，2：失败
+
+
+class GroupArticle(models.Model):
+    group_id = models.IntegerField(default=0)
+    article_id = models.IntegerField(default=0)
+    type = models.IntegerField(default=0)

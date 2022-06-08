@@ -9,6 +9,8 @@ urlpatterns = [
     path('high', high),
     path('collection', collection),
     path('star',star),
-    path('passage', passage),
+    path('commentTele', commentTele),
     path('mypassage', my_article),
+    path('hot_article', hot_article),
+    path('new_article', new_article),
 ]

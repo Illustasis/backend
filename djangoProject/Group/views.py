@@ -11,7 +11,7 @@ def hotgroup(request):
         list = Group.objects.all().order_by('heat').all()
         hotlist = []
         i = 0
-        while i < int(num):
+        while i < int(num) and i < len(list):
             hotlist.append({
                 'name': list[i].name,
                 'id': list[i].group_id
@@ -33,6 +33,60 @@ def upload_passage(request):
         article = Article(title=title, text=text, author_id=user_id, resource_id=resource_id, heat=0, column=5, likes=0)
         article.save()
         return JsonResponse({'errno': 0, 'msg': '发布成功！', 'data': article.pk})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+
+@csrf_exempt
+def hot_article(request):
+    if request.method == 'POST':
+        group_id = request.POST.get('group_id')
+        articles = Article.objects.filter(column=5).filter(resource_id=group_id).order_by('-heat')
+        article_list = []
+        for article in articles:
+            user = User.objects.get(user_id=article.author_id)
+            img = ''
+            icon = Photos.objects.filter(column=5, resource_id=user.user_id)
+            if icon.exists():
+                img = Photos.objects.get(column=5, resource_id=user.user_id).url
+            article_list.append({
+                'id':article.article_id,
+                'username': user.name,
+                'userid': user.user_id,
+                'date': article.date,
+                'content': article.text,
+                'title': article.title,
+                'usericon': img,
+                'thestyle': ''
+            })
+        return JsonResponse({'errno': 0, 'data': article_list})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+
+@csrf_exempt
+def new_article(request):
+    if request.method == 'POST':
+        group_id = request.POST.get('group_id')
+        articles = Article.objects.filter(column=5).filter(resource_id=group_id).order_by('-date')
+        article_list = []
+        for article in articles:
+            user = User.objects.get(user_id=article.author_id)
+            img = ''
+            icon = Photos.objects.filter(column=5, resource_id=user.user_id)
+            if icon.exists():
+                img = Photos.objects.get(column=5, resource_id=user.user_id).url
+            article_list.append({
+                'id': article.article_id,
+                'username': user.name,
+                'userid': user.user_id,
+                'date': article.date,
+                'content': article.text,
+                'title': article.title,
+                'usericon': img,
+                'thestyle': ''
+            })
+        return JsonResponse({'errno': 0, 'data': article_list})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 

@@ -10,4 +10,6 @@ urlpatterns = [
     path('collection', collection),
     path('passage', dt),
     path('mypassage',my_article),
+    path('hot_article', hot_article),
+    path('new_article', new_article),
 ]

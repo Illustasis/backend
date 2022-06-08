@@ -42,6 +42,7 @@ def high(request):
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
+
 @csrf_exempt
 def collect(request):
     if request.method == 'POST':
@@ -52,6 +53,7 @@ def collect(request):
         return JsonResponse({'errno':0, 'msg': "收藏成功"})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
 
 @csrf_exempt
 def uncollect(request):
@@ -67,6 +69,8 @@ def uncollect(request):
             return JsonResponse({'errno':200, 'msg': "取消收藏失败"})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+
 @csrf_exempt
 def collection(request):
     if request.method == 'POST':
@@ -85,6 +89,7 @@ def collection(request):
         return JsonResponse({'errno':0, 'data':collect})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
 
 @csrf_exempt
 def detail(request):
@@ -125,18 +130,74 @@ def detail(request):
     else:
         return JsonResponse({'errno': 1000})
 
+
 @csrf_exempt
-def passage(request):
+def commentMovie(request):
     if request.method == 'POST':
         movie_id = request.POST.get('movie_id')
         user_id = request.POST.get('user_id')
         title=request.POST.get('title')
         text=request.POST.get('text')
-        article=Article(title=title,text=text,author_id=user_id,resource_id=movie_id,heat=0,column=2,likes=0)
+        article=Article(title=title, text=text, author_id=user_id, resource_id=movie_id, heat=0, column=2, likes=0)
         article.save()
-        return JsonResponse({'errno':0,'msg':'发布成功！','data':article.pk})
+        return JsonResponse({'errno': 0, 'msg': '发布成功！', 'data': article.pk})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+
+@csrf_exempt
+def hot_article(request):
+    if request.method == 'POST':
+        movie_id = request.POST.get('movie_id')
+        articles = Article.objects.filter(column=2).filter(resource_id=movie_id).order_by('-heat')
+        article_list = []
+        for article in articles:
+            user = User.objects.get(user_id=article.author_id)
+            img = ''
+            icon = Photos.objects.filter(column=2, resource_id=user.user_id)
+            if icon.exists():
+                img = Photos.objects.get(column=2, resource_id=user.user_id).url
+            article_list.append({
+                'id': article.article_id,
+                'username': user.name,
+                'userid': user.user_id,
+                'date': article.date,
+                'content': article.text,
+                'title': article.title,
+                'usericon': img,
+                'thestyle': ''
+            })
+        return JsonResponse({'errno': 0, 'data': article_list})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+
+@csrf_exempt
+def new_article(request):
+    if request.method == 'POST':
+        movie_id = request.POST.get('movie_id')
+        articles = Article.objects.filter(column=2).filter(resource_id=movie_id).order_by('-date')
+        article_list = []
+        for article in articles:
+            user = User.objects.get(user_id=article.author_id)
+            img = ''
+            icon = Photos.objects.filter(column=2, resource_id=user.user_id)
+            if icon.exists():
+                img = Photos.objects.get(column=2, resource_id=user.user_id).url
+            article_list.append({
+                'id': article.article_id,
+                'username': user.name,
+                'userid': user.user_id,
+                'date': article.date,
+                'content': article.text,
+                'title': article.title,
+                'usericon': img,
+                'thestyle': ''
+            })
+        return JsonResponse({'errno': 0, 'data': article_list})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
 
 @csrf_exempt
 def star(request):

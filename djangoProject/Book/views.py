@@ -148,6 +148,7 @@ def star(request):
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
+
 @csrf_exempt
 def commentBook(request):
     if request.method == 'POST':
@@ -161,12 +162,12 @@ def commentBook(request):
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
+
 @csrf_exempt
 def hot_article(request):
     if request.method == 'POST':
         book_id = request.POST.get('book_id')
         articles = Article.objects.filter(column=1).filter(resource_id=book_id).order_by('-heat')
-        # 不确定这里是从早到晚排序还是从晚到早排序，测试时如果遇到相反的可以把order_by后面括号内的'-date'改成'date'
         article_list = []
         for article in articles:
             user = User.objects.get(user_id=article.author_id)
@@ -194,7 +195,6 @@ def new_article(request):
     if request.method == 'POST':
         book_id = request.POST.get('book_id')
         articles = Article.objects.filter(column=1).filter(resource_id=book_id).order_by('-date')
-        # 不确定这里是从早到晚排序还是从晚到早排序，测试时如果遇到相反的可以把order_by后面括号内的'-date'改成'date'
         article_list = []
         for article in articles:
             user = User.objects.get(user_id=article.author_id)
