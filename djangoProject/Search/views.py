@@ -11,47 +11,58 @@ def book_search(request):
         search_id = request.POST.get('search_id')
         search_content = request.POST.get('search_content')
         if search_id == '11':  # 按书名
+            booklist = []
             books = Book.objects.filter(name__icontains=search_content)  # 返回包含查询内容的图书列表(不区分大小写)
             if books.exists():
-                booklist = []
                 for b in books:
+                    star = Score.objects.filter(resource_id=b.book_id,column=1)
                     booklist.append({
                         'name': b.name,
-                        'image': b.image,
+                        'publisher': b.press,
+                        'intro': b.introduction,
+                        'star': b.score,
+                        'readerNum':len(star),
+                        'img': b.image,
                         'author': b.author,
                         'id': b.book_id
                     })
-                return JsonResponse({'errno': 0, 'msg': '按书名查询', 'data': booklist})
-            else:
-                return JsonResponse({'errno': 1001, 'msg': '未找到相关图书'})
-        elif search_id == '12':  # 按作者
             books = Book.objects.filter(author__icontains=search_content)
             if books.exists():
-                booklist = []
                 for b in books:
-                    booklist.append({
+                    star = Score.objects.filter(resource_id=b.book_id,column=1)
+                    temp = {
                         'name': b.name,
-                        'image': b.image,
+                        'publisher': b.press,
+                        'intro': b.introduction,
+                        'star': b.score,
+                        'readerNum':len(star),
+                        'img': b.image,
                         'author': b.author,
                         'id': b.book_id
-                    })
-                return JsonResponse({'errno': 0, 'msg': '按图书作者查询', 'data': booklist})
-            else:
-                return JsonResponse({'errno': 1001, 'msg': '未找到相关图书'})
-        elif search_id == '13':  # 按简介
+                    }
+                    if temp in booklist:
+                        continue
+                    booklist.append(temp)
+                return JsonResponse({'errno': 0, 'msg': '按书名查询', 'data': booklist})
             books = Book.objects.filter(introduction__icontains=search_content)
             if books.exists():
-                booklist = []
                 for b in books:
-                    booklist.append({
+                    temp = {
                         'name': b.name,
-                        'image': b.image,
+                        'publisher': b.press,
+                        'intro': b.introduction,
+                        'star': b.score,
+                        'readerNum': len(star),
+                        'img': b.image,
                         'author': b.author,
                         'id': b.book_id
-                    })
-                return JsonResponse({'errno': 0, 'msg': '按图书简介查询', 'data': booklist})
-            else:
-                return JsonResponse({'errno': 1001, 'msg': '未找到相关图书'})
+                    }
+                    if temp in booklist:
+                        continue
+                    booklist.append(temp)
+            if len(booklist) == 0:
+                return JsonResponse({'errno': 200, 'msg': '未找到相关书籍'})
+            return JsonResponse({'errno': 0,  'data': booklist})
         else:
             return JsonResponse({'errno': 1002, 'msg': '查询编码错误'})
 
@@ -62,62 +73,79 @@ def movie_search(request):
     if request.method == 'POST':
         search_id = request.POST.get('search_id')
         search_content = request.POST.get('search_content')
+        movielist = []
         if search_id == '21':  # 按电影名
             movies = Movie.objects.filter(name__icontains=search_content)  # 返回包含查询内容的电影列表(不区分大小写)
-            if movies.exists():
-                movielist = []
-                for m in movies:
-                    movielist.append({
-                        'name': m.name,
-                        'image': m.image,
-                        'director': m.director,
-                        'id': m.movie_id
-                    })
-                return JsonResponse({'errno': 0, 'msg': '按电影名查询', 'data': movielist})
-            else:
-                return JsonResponse({'errno': 1001, 'msg': '未找到相关电影'})
-        elif search_id == '22':  # 按导演
+            for m in movies:
+                star = Score.objects.filter(resource_id=m.movie_id, column=2)
+                temp = {
+                    'name': m.name,
+                    'img': m.image,
+                    'year': m.year,
+                    'watchNum': len(star),
+                    'star': m.score,
+                    'intro': m.introduction,
+                    'director': m.director,
+                    'id': m.movie_id
+                }
+                if temp in movielist:
+                    continue
+                movielist.append(temp)
             movies = Movie.objects.filter(director__icontains=search_content)
             if movies.exists():
-                movielist = []
                 for m in movies:
-                    movielist.append({
+                    star = Score.objects.filter(resource_id=m.movie_id, column=2)
+                    temp = {
                         'name': m.name,
-                        'image': m.image,
+                        'img': m.image,
+                        'year':m.year,
+                        'watchNum': len(star),
+                        'star': m.score,
+                        'intro': m.introduction,
                         'director': m.director,
                         'id': m.movie_id
-                    })
-                return JsonResponse({'errno': 0, 'msg': '按电影导演查询', 'data': movielist})
-            else:
-                return JsonResponse({'errno': 1001, 'msg': '未找到相关电影'})
-        elif search_id == '23':  # 按演员
+                    }
+                    if temp in movielist:
+                        continue
+                    movielist.append(temp)
             movies = Movie.objects.filter(actor__icontains=search_content)
             if movies.exists():
-                movielist = []
                 for m in movies:
-                    movielist.append({
+                    star = Score.objects.filter(resource_id=m.movie_id, column=2)
+                    temp = {
                         'name': m.name,
-                        'image': m.image,
+                        'img': m.image,
+                        'year': m.year,
+                        'watchNum': len(star),
+                        'star': m.score,
+                        'intro': m.introduction,
                         'director': m.director,
                         'id': m.movie_id
-                    })
-                return JsonResponse({'errno': 0, 'msg': '按电影演员查询', 'data': movielist})
-            else:
-                return JsonResponse({'errno': 1001, 'msg': '未找到相关电影'})
-        elif search_id == '24':  # 按简介
+                    }
+                    if temp in movielist:
+                        continue
+                    movielist.append(temp)
             movies = Movie.objects.filter(introduction__icontains=search_content)
             if movies.exists():
-                movielist = []
                 for m in movies:
-                    movielist.append({
+                    star = Score.objects.filter(resource_id=m.movie_id, column=2)
+                    temp = {
                         'name': m.name,
-                        'image': m.image,
+                        'img': m.image,
+                        'year': m.year,
+                        'watchNum': len(star),
+                        'star': m.score,
+                        'intro': m.introduction,
                         'director': m.director,
                         'id': m.movie_id
-                    })
-                return JsonResponse({'errno': 0, 'msg': '按电影简介查询', 'data': movielist})
+                    }
+                    if temp in movielist:
+                        continue
+                    movielist.append(temp)
+            if len(movielist) != 0:
+                return JsonResponse({'errno': 0, 'data': movielist})
             else:
-                return JsonResponse({'errno': 1001, 'msg': '未找到相关电影'})
+                return JsonResponse({'errno': 200, 'msg': '未找到相关书电影'})
         else:
             return JsonResponse({'errno': 1002, 'msg': '查询编码错误'})
 
@@ -129,48 +157,63 @@ def tele_search(request):
         search_id = request.POST.get('search_id')
         search_content = request.POST.get('search_content')
         if search_id == '31':  # 按电视剧名
+            telelist = []
             teles = Tele.objects.filter(name__icontains=search_content)  # 返回包含查询内容的电视剧列表(不区分大小写)
             if teles.exists():
-                telelist = []
                 for t in teles:
-                    telelist.append({
+                    star = Score.objects.filter(resource_id=t.tele_id, column=3)
+                    temp = {
                         'name': t.name,
-                        'image': t.image,
+                        'watchNum':len(star),
+                        'star':t.score,
+                        'img': t.image,
+                        'actor':t.actor,
+                        'intro':t.introduction,
                         'year': t.year,
                         'nation': t.nation,
                         'id': t.tele_id
-                    })
-                return JsonResponse({'errno': 0, 'msg': '按电视剧名查询', 'data': telelist})
-            else:
-                return JsonResponse({'errno': 1001, 'msg': '未找到相关电视剧'})
-        elif search_id == '32':  # 按演员
+                    }
+                    if temp in telelist:
+                        continue
+                    telelist.append(temp)
             teles = Tele.objects.filter(actor__icontains=search_content)
             if teles.exists():
-                telelist = []
                 for t in teles:
-                    telelist.append({
+                    star = Score.objects.filter(resource_id=t.tele_id, column=3)
+                    temp = {
                         'name': t.name,
-                        'image': t.image,
+                        'watchNum':len(star),
+                        'star':t.score,
+                        'img': t.image,
+                        'actor':t.actor,
+                        'intro':t.introduction,
                         'year': t.year,
                         'nation': t.nation,
                         'id': t.tele_id
-                    })
-                return JsonResponse({'errno': 0, 'msg': '按电视剧演员查询', 'data': telelist})
-            else:
-                return JsonResponse({'errno': 1001, 'msg': '未找到相关电视剧'})
-        elif search_id == '33':  # 按简介
+                    }
+                    if temp in telelist:
+                        continue
+                    telelist.append(temp)
             teles = Tele.objects.filter(introduction__icontains=search_content)
             if teles.exists():
-                telelist = []
                 for t in teles:
-                    telelist.append({
+                    star = Score.objects.filter(resource_id=t.tele_id, column=3)
+                    temp = {
                         'name': t.name,
-                        'image': t.image,
+                        'watchNum': len(star),
+                        'star': t.score,
+                        'img': t.image,
+                        'actor': t.actor,
+                        'intro': t.introduction,
                         'year': t.year,
                         'nation': t.nation,
                         'id': t.tele_id
-                    })
-                return JsonResponse({'errno': 0, 'msg': '按电视剧简介查询', 'data': telelist})
+                    }
+                    if temp in telelist:
+                        continue
+                    telelist.append(temp)
+            if len(telelist)!=0:
+                return JsonResponse({'errno': 0,  'data': telelist})
             else:
                 return JsonResponse({'errno': 1001, 'msg': '未找到相关电视剧'})
         else:
@@ -240,7 +283,16 @@ def article_search(request):
         search_id = request.POST.get('search_id')
         search_content = request.POST.get('search_content')
         if search_id == '61':  # 按文章名
-            articles = Article.objects.filter(title__icontains=search_content)
+            articles = Article.objects.filter(title__icontains=search_content,column=4)
+            if articles.exists():
+                articlelist = []
+                for a in articles:
+                    articlelist.append(a)
+                return JsonResponse({'errno': 0, 'msg': '按文章名查询', 'data': articlelist})
+            else:
+                return JsonResponse({'errno': 1001, 'msg': '未找到相关文章'})
+        if search_id == '62':  # 按文章名
+            articles = Article.objects.filter(title__icontains=search_content,column=5)
             if articles.exists():
                 articlelist = []
                 for a in articles:

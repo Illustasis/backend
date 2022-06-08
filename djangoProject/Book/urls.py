@@ -12,5 +12,6 @@ urlpatterns = [
     path('collection', book_collection),
     path('star', star),
     path('passage', commentBook),
+    path('hotpassage',hotcomment),
     path('mypassage',my_article),
 ]

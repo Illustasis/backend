@@ -26,13 +26,9 @@ def upload_photo(request):
                 resource2.save()
                 return JsonResponse({'errno':0,'msg':'头像上传成功','data':{'url':'/upload/'+image_name}})
             elif resource_type == '2':  # 种类是文章图片时
-                if len(resource) < 3:
-                    resource3 = Photos.objects.create(url='/upload/'+image_name, resource_id=resource_id, column=resource_type)
-                    resource3.save()
-                    return JsonResponse({'errno':0,'msg':'图片上传成功'})
-                else:
-                    return JsonResponse({'errno':100,'msg':'图片数量到达上限'})
-
+                resource3 = Photos.objects.create(url='/upload/'+image_name, resource_id=resource_id, column=resource_type)
+                resource3.save()
+                return JsonResponse({'errno':0,'msg':'图片上传成功'})
             else:
                 return JsonResponse({'errno':100,'msg':'资源种类有限'})
         else:

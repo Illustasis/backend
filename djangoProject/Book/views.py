@@ -165,12 +165,26 @@ def commentBook(request):
 def hot_article(request):
     if request.method == 'POST':
         book_id = request.POST.get('book_id')
-        articles = Article.objects.filter(columm=1).filter(article_id=book_id).order_by('-heat')  # 按照文章类型和文章ID查找
+        articles = Article.objects.filter(column=1).filter(resource_id=book_id).order_by('-heat')
+        # 不确定这里是从早到晚排序还是从晚到早排序，测试时如果遇到相反的可以把order_by后面括号内的'-date'改成'date'
         article_list = []
         for article in articles:
-            article_list.append(article)
-        # 生成文章的JSON文件
-        return JsonResponse({'errno':0,'data':article_list})
+            user = User.objects.get(user_id=article.author_id)
+            img = ''
+            icon = Photos.objects.filter(column=1, resource_id=user.user_id)
+            if icon.exists():
+                img = Photos.objects.get(column=1, resource_id=user.user_id).url
+            article_list.append({
+                'id':article.article_id,
+                'username': user.name,
+                'userid': user.user_id,
+                'date': article.date,
+                'content': article.text,
+                'title': article.title,
+                'usericon': img,
+                'thestyle': ''
+            })
+        return JsonResponse({'errno': 0, 'data': article_list})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
@@ -179,15 +193,59 @@ def hot_article(request):
 def new_article(request):
     if request.method == 'POST':
         book_id = request.POST.get('book_id')
-        articles = Article.objects.filter(columm=1).filter(article_id=book_id).order_by('-date')
+        articles = Article.objects.filter(column=1).filter(resource_id=book_id).order_by('-date')
         # 不确定这里是从早到晚排序还是从晚到早排序，测试时如果遇到相反的可以把order_by后面括号内的'-date'改成'date'
         article_list = []
         for article in articles:
-            article_list.append(article)
-        article_json = json.dumps({'value': article_list}, ensure_ascii=False)
-        return JsonResponse({'成功': 200}, article_json)
+            user = User.objects.get(user_id=article.author_id)
+            img = ''
+            icon = Photos.objects.filter(column=1, resource_id=user.user_id)
+            if icon.exists():
+                img = Photos.objects.get(column=1, resource_id=user.user_id).url
+            article_list.append({
+                'id': article.article_id,
+                'username': user.name,
+                'userid': user.user_id,
+                'date': article.date,
+                'content': article.text,
+                'title': article.title,
+                'usericon': img,
+                'thestyle': ''
+            })
+        return JsonResponse({'errno': 0, 'data': article_list})
     else:
-        return JsonResponse({'失败，请求方式错误': 100})
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+@csrf_exempt
+def hotcomment(request):
+    if request.method == 'POST':
+        articles = Article.objects.filter(column=1).order_by('-heat')
+        # 不确定这里是从早到晚排序还是从晚到早排序，测试时如果遇到相反的可以把order_by后面括号内的'-date'改成'date'
+        article_list = []
+        for article in articles:
+            user_id = article.author_id
+            user = User.objects.get(user_id=user_id)
+            image = Photos.objects.filter(resource_id=user_id, column=1)
+            book = Book.objects.get(book_id=article.resource_id)
+            icon = ""
+            if image.exists():
+                image = Photos.objects.get(resource_id=user_id, column=1)
+                icon = image.url
+            passage = {
+                'username': user.name,
+                'usericon': icon,
+                'id': article.article_id,
+                'bookname': book.name,
+                'bookid': book.book_id,
+                'img': book.image,
+                'title': article.title,
+                'content': article.text,
+                'thestyle':''
+            }
+            article_list.append(passage)
+        return JsonResponse({'errno':0, 'data':article_list})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': '失败，请求方式错误'})
 
 @csrf_exempt
 def my_article(request):

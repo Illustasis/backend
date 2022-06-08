@@ -10,7 +10,7 @@ def hot(request):
         telelist=Tele.objects.all().order_by('heat').all()
         hottelelist=[]
         i=0
-        while i<10:
+        while i<int(num):
             hottelelist.append({
                 'name':telelist[i].name,
                 'image':telelist[i].image,
@@ -30,8 +30,9 @@ def high(request):
         telelist=Tele.objects.all().order_by('score').all()
         hightelelist=[]
         i=0
-        while i<10:
+        while i<int(num):
             hightelelist.append({
+                'star':telelist[i].score,
                 'name':telelist[i].name,
                 'image':telelist[i].image,
                 'year':telelist[i].year,

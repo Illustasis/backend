@@ -26,11 +26,12 @@ def hot(request):
 def high(request):
     if request.method == 'POST':
         num = request.POST.get('num')
-        movielist=Movie.objects.all().order_by('score').all()
+        movielist=Movie.objects.all().order_by('-score').all()
         highmovielist=[]
         i=0
         while i<int(num):
             highmovielist.append({
+                'star':movielist[i].score,
                 'name':movielist[i].name,
                 'image':movielist[i].image,
                 'director':movielist[i].director,
@@ -71,7 +72,6 @@ def collection(request):
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         collections = Collect.objects.filter(user_id=user_id,column=2)
-        print(collections)
         collect=[]
         for item in collections:
             movie = Movie.objects.get(movie_id=item.resource_id)
@@ -92,15 +92,27 @@ def detail(request):
         movie_id = request.POST.get('movie_id')  # 获取图书ID
         user_id = request.POST.get('user_id')  # 获取用户ID
         movie = Movie.objects.get(movie_id=movie_id)
-        users_id = Collect.objects.filter(resource_id=movie_id,column=2,user_id=user_id)# 查询关注此书的用户
-        # 生成关注用户ID列表(int数据类型)
+        users_id = Collect.objects.filter(resource_id=movie_id,column=2,user_id=user_id)
+        star = Score.objects.filter(column=2, resource_id=movie_id, user_id=user_id)
+        myscore = 0.0
+        if star.exists():
+            star = Score.objects.get(column=2, resource_id=movie_id, user_id=user_id)
+            myscore = star.score
+        people = Score.objects.filter(column=2, resource_id=movie_id)
+        peoplenum = len(people)
+        rank_list = []
+        i = 1.0
+        while i < 6:
+            rank_num = len(Score.objects.filter(column=2, resource_id=movie_id, score=i))
+            rank_list.append(rank_num)
+            i = i + 1.0
         if users_id.exists(): # 查找该用户是否在列表内，在则返回已关注，否则返回未关注
             return JsonResponse(
                 {'errno': 0,
                  'data':{
                  'movie_id': movie.movie_id, 'name': movie.name, 'image': movie.image, 'director':movie.director,
                  'actor': movie.actor, 'year':movie.year, 'intro': movie.introduction, 'score': movie.score, 'heat': movie.heat},
-                 'collect': 1})
+                 'collect': 1,'evaluate':myscore,'people':peoplenum,'list':rank_list})
         else:
             return JsonResponse(
                 {'errno': 0,
@@ -108,7 +120,7 @@ def detail(request):
                      'movie_id': movie.movie_id, 'name': movie.name, 'image': movie.image, 'director': movie.director,
                      'actor': movie.actor, 'year': movie.year, 'intro': movie.introduction, 'score': movie.score,
                      'heat': movie.heat},
-                 'collect': 0})
+                 'collect': 0,'evaluate':myscore,'people':peoplenum,'list':rank_list})
 
     else:
         return JsonResponse({'errno': 1000})
