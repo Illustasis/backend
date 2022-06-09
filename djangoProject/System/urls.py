@@ -2,6 +2,7 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
+    path('get_code', get_code),
     path('register', register),  # 指定register函数的路由为register
     path('login', login),
     path('uploadbook', savebook),

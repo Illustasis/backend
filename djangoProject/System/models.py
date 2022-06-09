@@ -121,3 +121,12 @@ class GroupArticle(models.Model):
     group_id = models.IntegerField(default=0)
     article_id = models.IntegerField(default=0)
     type = models.IntegerField(default=0)
+
+
+# 验证码记录表：每获取一次验证码创建一条（类似日志），故同一邮箱可有多条记录，只是验证码和时间不同
+class Email(models.Model):
+    code = models.CharField(max_length=20)      # 验证码
+    email = models.EmailField(max_length=50)
+    user_id = models.IntegerField(default=0)
+    status = models.IntegerField(default=0)     # 0：未激活，1：已激活
+    add_time = models.DateTimeField(auto_now_add=True)      # 添加时间
