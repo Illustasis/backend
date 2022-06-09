@@ -277,3 +277,29 @@ def myGroup(request):
                 'member':group.member
             }))
         return JsonResponse({'errno': 0, 'msg': '查询加入的小组', 'data': group_list})
+
+
+# 加入小组
+@csrf_exempt
+def collect_group(request):
+    if request.method == 'POST':
+        return JsonResponse({'errno': 0, 'msg':'成功'})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+# 退出小组
+@csrf_exempt
+def collect_group(request):
+    if request.method == 'POST':
+        return JsonResponse({'errno': 0, 'msg':'成功'})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
+
+# 申请管理员
+@csrf_exempt
+def collect_group(request):
+    if request.method == 'POST':
+        return JsonResponse({'errno': 0, 'msg':'成功'})
+    else:
+        return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})

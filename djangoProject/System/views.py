@@ -222,8 +222,16 @@ def add_report(request):
 @csrf_exempt
 def get_report(request):
     if request.method == 'GET':
-        reports = Report.objects.all().values()
-        report_list = list(reports)
-        return JsonResponse({'errno': 0, 'data': report_list})
+        data = []
+        for e in Report.objects.all():
+            data.append({
+                'reporter_id': e.reporter_id,
+                'reporter_name': User.objects.get(user_id=e.reporter_id).name,
+                'report_title': e.report_title,
+                'report_reason': e.report_reason,
+                'result': e.result,
+            })
+        print(data)
+        return JsonResponse({'errno': 0, 'data': data})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
