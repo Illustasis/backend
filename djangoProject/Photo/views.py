@@ -6,6 +6,7 @@ from djangoProject import settings
 from Photo.models import *
 import datetime
 
+
 # 上传
 @csrf_exempt
 def upload_photo(request):
@@ -21,25 +22,28 @@ def upload_photo(request):
         f.close()
         if resource.exists():
             if resource_type == '1':  # 种类是用户头像时
-                resource2 = Photos.objects.get(resource_id=resource_id,column=resource_type)
-                resource2.url = '/upload/'+image_name
+                resource2 = Photos.objects.get(resource_id=resource_id, column=resource_type)
+                resource2.url = '/upload/' + image_name
                 resource2.save()
-                return JsonResponse({'errno':0,'msg':'头像上传成功','data':{'url':'/upload/'+image_name}})
+                return JsonResponse({'errno': 0, 'msg': '头像上传成功', 'data': {'url': '/upload/' + image_name}})
             elif resource_type == '2':  # 种类是文章图片时
-                resource3 = Photos.objects.create(url='/upload/'+image_name, resource_id=resource_id, column=resource_type)
+                resource3 = Photos.objects.create(url='/upload/' + image_name, resource_id=resource_id,
+                                                  column=resource_type)
                 resource3.save()
-                return JsonResponse({'errno':0,'msg':'图片上传成功'})
+                return JsonResponse({'errno': 0, 'msg': '图片上传成功'})
             else:
-                return JsonResponse({'errno':100,'msg':'资源种类有限'})
+                return JsonResponse({'errno': 100, 'msg': '资源种类有限'})
         else:
             if resource_type == '1' or resource_type == '2':
-                resource4 = Photos.objects.create(url='/upload/'+image_name, resource_id=resource_id, column=resource_type)
+                resource4 = Photos.objects.create(url='/upload/' + image_name, resource_id=resource_id,
+                                                  column=resource_type)
                 resource4.save()
-                return JsonResponse({'errno':200,'msg':'上传图片成功'})
+                return JsonResponse({'errno': 200, 'msg': '上传图片成功'})
             else:
-                return JsonResponse({'errno':100,'msg':'资源种类有限'})
+                return JsonResponse({'errno': 100, 'msg': '资源种类有限'})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
+
 
 # 获取图片
 @csrf_exempt
@@ -50,10 +54,16 @@ def get_photo(request):
         resource = Photos.objects.filter(resource_id=resource_id).filter(column=resource_type)
         if resource.exists():
             for r in resource:
-                return JsonResponse({'errno':0,'photo': r.url})
+                return JsonResponse({'errno': 0, 'photo': r.url})
         else:
-            return JsonResponse({'errno':100,'msg':'无图片'})
+            return JsonResponse({'errno': 100, 'msg': '无图片'})
     else:
         return JsonResponse({'errno': 1001, 'msg': "请求方式错误"})
 
 
+def get_avatar(user_id):
+    img = ''
+    icon = Photos.objects.filter(column=1, resource_id=user_id)
+    if icon.exists():
+        img = Photos.objects.get(column=1, resource_id=user_id).url
+    return img
