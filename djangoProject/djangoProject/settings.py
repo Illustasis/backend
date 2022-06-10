@@ -193,7 +193,7 @@ UPLOAD_FILE = os.path.join(BASE_DIR,'upload')
 EMAIL_HOST = "smtp.qq.com"     # 服务器
 EMAIL_PORT = 25                 # 一般情况下都为25
 EMAIL_HOST_USER = "591172225@qq.com"     # 账号
-EMAIL_HOST_PASSWORD = "xggsswhtqnylbcbc"          # 密码 (注意：这里的密码指的是授权码)
+EMAIL_HOST_PASSWORD = ""          # 密码 (注意：这里的密码指的是授权码)
 EMAIL_USE_TLS = False       # 一般都为False
 EMAIL_FROM = "591172225@qq.com"      # 邮箱来自
 
